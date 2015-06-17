@@ -30,8 +30,6 @@ namespace MediatRPlayground
                 cfg.For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
                 cfg.For<IMediator>().Use<Mediator>();
 
-                cfg.For(typeof(IRequestHandler<,>)).
-
                 cfg.For<CustomerDesk>().Use<CustomerDesk>();
                 
             });
