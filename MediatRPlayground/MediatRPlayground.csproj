@@ -32,15 +32,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
     <Reference Include="MediatR, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MediatR.2.0.0-beta-004\lib\portable-net45+win+wpa81+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10\MediatR.dll</HintPath>
-    </Reference>
-    <Reference Include="StructureMap">
-      <HintPath>..\packages\structuremap.3.1.5.154\lib\net40\StructureMap.dll</HintPath>
-    </Reference>
-    <Reference Include="StructureMap.Net4">
-      <HintPath>..\packages\structuremap.3.1.5.154\lib\net40\StructureMap.Net4.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,21 +51,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\CommunicationSystem.cs" />
-    <Compile Include="Components\CustomerDesk.cs" />
-    <Compile Include="Components\Delivery.cs" />
-    <Compile Include="Components\Sellers.cs" />
-    <Compile Include="Components\Storage.cs" />
-    <Compile Include="Messages\AlertClient.cs" />
-    <Compile Include="Messages\CheckAvailability.cs" />
-    <Compile Include="Messages\CommunicationWithClient.cs" />
-    <Compile Include="Messages\DeliverItem.cs" />
-    <Compile Include="Messages\ProcessOrder.cs" />
-    <Compile Include="Messages\InformClient.cs" />
-    <Compile Include="Messages\RefillStock.cs" />
-    <Compile Include="Messages\StockRefillDelivery.cs" />
+    <Compile Include="Actors\BaseActor.cs" />
+    <Compile Include="Actors\Manager.cs" />
+    <Compile Include="Actors\Waiter.cs" />
+    <Compile Include="Actors\SensitiveCook.cs" />
+    <Compile Include="Actors\Customer.cs" />
+    <Compile Include="Events\OrderCompleted.cs" />
+    <Compile Include="Events\OrderPassed.cs" />
+    <Compile Include="Events\ItemOrdered.cs" />
+    <Compile Include="Events\ItemReady.cs" />
+    <Compile Include="Events\SatisfactionExpressed.cs" />
+    <Compile Include="Events\StaffWarned.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\BackgroundQueue.cs" />
+    <Compile Include="Tools\ContravariantFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

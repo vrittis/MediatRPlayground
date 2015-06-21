@@ -1,48 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+using Castle.MicroKernel;
+using Castle.MicroKernel.Registration;
+using Castle.Windsor;
 using MediatR;
-using MediatRPlayground.Components;
-using MediatRPlayground.Messages;
-using StructureMap;
+using MediatRPlayground.Actors;
+using MediatRPlayground.Tools;
 
 namespace MediatRPlayground
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            var container = new Container(cfg =>
-            {
-                cfg.Scan(scanner =>
-                {
-                    //scanner.AssemblyContainingType<ProcessOrder>(); 
-                    scanner.IncludeNamespaceContainingType<CommunicationSystem>();
-                    scanner.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
-                    scanner.ConnectImplementationsToTypesClosing(typeof(IAsyncRequestHandler<,>));
-                    scanner.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
-                    scanner.ConnectImplementationsToTypesClosing(typeof(IAsyncNotificationHandler<>));
-                });
-                
-                cfg.For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
-                cfg.For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
-                cfg.For<IMediator>().Use<Mediator>();
+            var container = RegisterIOC();
+            var customer = ResolveCustomer(container);
+            ListenToCustomer(customer);
+        }
 
-                cfg.For<CustomerDesk>().Use<CustomerDesk>();
-                
-            });
+        private static WindsorContainer RegisterIOC()
+        {
+            var container = new WindsorContainer();
+            container.Register(Component.For<IMediator>().ImplementedBy<Mediator>());
+            container.Register(
+                Classes.FromAssemblyInThisApplication().InSameNamespaceAs<Customer>().WithServiceAllInterfaces());
 
-            var customerDesk = container.GetInstance<CustomerDesk>();
+            container.Kernel.AddHandlersFilter(new ContravariantFilter());
+            container.Register(
+                Component.For<SingleInstanceFactory>().UsingFactoryMethod<SingleInstanceFactory>(k => t => k.Resolve(t)));
+            container.Register(
+                Component.For<MultiInstanceFactory>()
+                    .UsingFactoryMethod<MultiInstanceFactory>(k => t => (IEnumerable<object>)k.ResolveAll(t)));
+            return container;
+        }
 
+
+        private static Customer ResolveCustomer(WindsorContainer container)
+        {
+            return container.Resolve<Customer>();
+        }
+
+        private static void ListenToCustomer(Customer customer)
+        {
             Console.WriteLine("Type what you want: q to exit");
-            var itemOrdered = Console.ReadLine();
-            while (itemOrdered != "q")
+            var item = Console.ReadLine();
+            while (item != "q")
             {
-                customerDesk.ReceiveOrderFromCustomer(itemOrdered);
-                itemOrdered = Console.ReadLine();
+                customer.Order(item);
+                item = Console.ReadLine();
             }
         }
+
+
+
+
+       
     }
 }
